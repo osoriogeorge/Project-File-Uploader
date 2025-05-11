@@ -3474,9 +3474,9 @@ export namespace Prisma {
     id: number | null
     filename: string | null
     originalName: string | null
+    url: string | null
     mimeType: string | null
     size: number | null
-    path: string | null
     folderId: number | null
     userId: number | null
     createdAt: Date | null
@@ -3487,9 +3487,9 @@ export namespace Prisma {
     id: number | null
     filename: string | null
     originalName: string | null
+    url: string | null
     mimeType: string | null
     size: number | null
-    path: string | null
     folderId: number | null
     userId: number | null
     createdAt: Date | null
@@ -3500,9 +3500,9 @@ export namespace Prisma {
     id: number
     filename: number
     originalName: number
+    url: number
     mimeType: number
     size: number
-    path: number
     folderId: number
     userId: number
     createdAt: number
@@ -3529,9 +3529,9 @@ export namespace Prisma {
     id?: true
     filename?: true
     originalName?: true
+    url?: true
     mimeType?: true
     size?: true
-    path?: true
     folderId?: true
     userId?: true
     createdAt?: true
@@ -3542,9 +3542,9 @@ export namespace Prisma {
     id?: true
     filename?: true
     originalName?: true
+    url?: true
     mimeType?: true
     size?: true
-    path?: true
     folderId?: true
     userId?: true
     createdAt?: true
@@ -3555,9 +3555,9 @@ export namespace Prisma {
     id?: true
     filename?: true
     originalName?: true
+    url?: true
     mimeType?: true
     size?: true
-    path?: true
     folderId?: true
     userId?: true
     createdAt?: true
@@ -3655,9 +3655,9 @@ export namespace Prisma {
     id: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     folderId: number
     userId: number
     createdAt: Date
@@ -3687,9 +3687,9 @@ export namespace Prisma {
     id?: boolean
     filename?: boolean
     originalName?: boolean
+    url?: boolean
     mimeType?: boolean
     size?: boolean
-    path?: boolean
     folderId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -3702,9 +3702,9 @@ export namespace Prisma {
     id?: boolean
     filename?: boolean
     originalName?: boolean
+    url?: boolean
     mimeType?: boolean
     size?: boolean
-    path?: boolean
     folderId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -3717,9 +3717,9 @@ export namespace Prisma {
     id?: boolean
     filename?: boolean
     originalName?: boolean
+    url?: boolean
     mimeType?: boolean
     size?: boolean
-    path?: boolean
     folderId?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -3732,16 +3732,16 @@ export namespace Prisma {
     id?: boolean
     filename?: boolean
     originalName?: boolean
+    url?: boolean
     mimeType?: boolean
     size?: boolean
-    path?: boolean
     folderId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "originalName" | "mimeType" | "size" | "path" | "folderId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["file"]>
+  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "originalName" | "url" | "mimeType" | "size" | "folderId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["file"]>
   export type FileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     folder?: boolean | FolderDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3765,9 +3765,9 @@ export namespace Prisma {
       id: number
       filename: string
       originalName: string
+      url: string
       mimeType: string
       size: number
-      path: string
       folderId: number
       userId: number
       createdAt: Date
@@ -4200,9 +4200,9 @@ export namespace Prisma {
     readonly id: FieldRef<"File", 'Int'>
     readonly filename: FieldRef<"File", 'String'>
     readonly originalName: FieldRef<"File", 'String'>
+    readonly url: FieldRef<"File", 'String'>
     readonly mimeType: FieldRef<"File", 'String'>
     readonly size: FieldRef<"File", 'Int'>
-    readonly path: FieldRef<"File", 'String'>
     readonly folderId: FieldRef<"File", 'Int'>
     readonly userId: FieldRef<"File", 'Int'>
     readonly createdAt: FieldRef<"File", 'DateTime'>
@@ -4627,70 +4627,52 @@ export namespace Prisma {
 
   export type AggregateSession = {
     _count: SessionCountAggregateOutputType | null
-    _avg: SessionAvgAggregateOutputType | null
-    _sum: SessionSumAggregateOutputType | null
     _min: SessionMinAggregateOutputType | null
     _max: SessionMaxAggregateOutputType | null
   }
 
-  export type SessionAvgAggregateOutputType = {
-    id: number | null
-  }
-
-  export type SessionSumAggregateOutputType = {
-    id: number | null
-  }
-
   export type SessionMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     sid: string | null
-    expires: Date | null
     data: string | null
+    expiresAt: Date | null
   }
 
   export type SessionMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     sid: string | null
-    expires: Date | null
     data: string | null
+    expiresAt: Date | null
   }
 
   export type SessionCountAggregateOutputType = {
     id: number
     sid: number
-    expires: number
     data: number
+    expiresAt: number
     _all: number
   }
 
 
-  export type SessionAvgAggregateInputType = {
-    id?: true
-  }
-
-  export type SessionSumAggregateInputType = {
-    id?: true
-  }
-
   export type SessionMinAggregateInputType = {
     id?: true
     sid?: true
-    expires?: true
     data?: true
+    expiresAt?: true
   }
 
   export type SessionMaxAggregateInputType = {
     id?: true
     sid?: true
-    expires?: true
     data?: true
+    expiresAt?: true
   }
 
   export type SessionCountAggregateInputType = {
     id?: true
     sid?: true
-    expires?: true
     data?: true
+    expiresAt?: true
     _all?: true
   }
 
@@ -4732,18 +4714,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: SessionAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: SessionSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: SessionMinAggregateInputType
@@ -4774,20 +4744,16 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: SessionCountAggregateInputType | true
-    _avg?: SessionAvgAggregateInputType
-    _sum?: SessionSumAggregateInputType
     _min?: SessionMinAggregateInputType
     _max?: SessionMaxAggregateInputType
   }
 
   export type SessionGroupByOutputType = {
-    id: number
+    id: string
     sid: string
-    expires: Date
     data: string
+    expiresAt: Date
     _count: SessionCountAggregateOutputType | null
-    _avg: SessionAvgAggregateOutputType | null
-    _sum: SessionSumAggregateOutputType | null
     _min: SessionMinAggregateOutputType | null
     _max: SessionMaxAggregateOutputType | null
   }
@@ -4809,41 +4775,41 @@ export namespace Prisma {
   export type SessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sid?: boolean
-    expires?: boolean
     data?: boolean
+    expiresAt?: boolean
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sid?: boolean
-    expires?: boolean
     data?: boolean
+    expiresAt?: boolean
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sid?: boolean
-    expires?: boolean
     data?: boolean
+    expiresAt?: boolean
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectScalar = {
     id?: boolean
     sid?: boolean
-    expires?: boolean
     data?: boolean
+    expiresAt?: boolean
   }
 
-  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sid" | "expires" | "data", ExtArgs["result"]["session"]>
+  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sid" | "data" | "expiresAt", ExtArgs["result"]["session"]>
 
   export type $SessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Session"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       sid: string
-      expires: Date
       data: string
+      expiresAt: Date
     }, ExtArgs["result"]["session"]>
     composites: {}
   }
@@ -5267,10 +5233,10 @@ export namespace Prisma {
    * Fields of the Session model
    */
   interface SessionFieldRefs {
-    readonly id: FieldRef<"Session", 'Int'>
+    readonly id: FieldRef<"Session", 'String'>
     readonly sid: FieldRef<"Session", 'String'>
-    readonly expires: FieldRef<"Session", 'DateTime'>
     readonly data: FieldRef<"Session", 'String'>
+    readonly expiresAt: FieldRef<"Session", 'DateTime'>
   }
     
 
@@ -5675,9 +5641,9 @@ export namespace Prisma {
     id: 'id',
     filename: 'filename',
     originalName: 'originalName',
+    url: 'url',
     mimeType: 'mimeType',
     size: 'size',
-    path: 'path',
     folderId: 'folderId',
     userId: 'userId',
     createdAt: 'createdAt',
@@ -5690,8 +5656,8 @@ export namespace Prisma {
   export const SessionScalarFieldEnum: {
     id: 'id',
     sid: 'sid',
-    expires: 'expires',
-    data: 'data'
+    data: 'data',
+    expiresAt: 'expiresAt'
   };
 
   export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -5895,9 +5861,9 @@ export namespace Prisma {
     id?: IntFilter<"File"> | number
     filename?: StringFilter<"File"> | string
     originalName?: StringFilter<"File"> | string
+    url?: StringFilter<"File"> | string
     mimeType?: StringFilter<"File"> | string
     size?: IntFilter<"File"> | number
-    path?: StringFilter<"File"> | string
     folderId?: IntFilter<"File"> | number
     userId?: IntFilter<"File"> | number
     createdAt?: DateTimeFilter<"File"> | Date | string
@@ -5910,9 +5876,9 @@ export namespace Prisma {
     id?: SortOrder
     filename?: SortOrder
     originalName?: SortOrder
+    url?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
-    path?: SortOrder
     folderId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -5928,9 +5894,9 @@ export namespace Prisma {
     NOT?: FileWhereInput | FileWhereInput[]
     filename?: StringFilter<"File"> | string
     originalName?: StringFilter<"File"> | string
+    url?: StringFilter<"File"> | string
     mimeType?: StringFilter<"File"> | string
     size?: IntFilter<"File"> | number
-    path?: StringFilter<"File"> | string
     folderId?: IntFilter<"File"> | number
     userId?: IntFilter<"File"> | number
     createdAt?: DateTimeFilter<"File"> | Date | string
@@ -5943,9 +5909,9 @@ export namespace Prisma {
     id?: SortOrder
     filename?: SortOrder
     originalName?: SortOrder
+    url?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
-    path?: SortOrder
     folderId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -5964,9 +5930,9 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"File"> | number
     filename?: StringWithAggregatesFilter<"File"> | string
     originalName?: StringWithAggregatesFilter<"File"> | string
+    url?: StringWithAggregatesFilter<"File"> | string
     mimeType?: StringWithAggregatesFilter<"File"> | string
     size?: IntWithAggregatesFilter<"File"> | number
-    path?: StringWithAggregatesFilter<"File"> | string
     folderId?: IntWithAggregatesFilter<"File"> | number
     userId?: IntWithAggregatesFilter<"File"> | number
     createdAt?: DateTimeWithAggregatesFilter<"File"> | Date | string
@@ -5977,49 +5943,47 @@ export namespace Prisma {
     AND?: SessionWhereInput | SessionWhereInput[]
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
-    id?: IntFilter<"Session"> | number
+    id?: StringFilter<"Session"> | string
     sid?: StringFilter<"Session"> | string
-    expires?: DateTimeFilter<"Session"> | Date | string
     data?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
   }
 
   export type SessionOrderByWithRelationInput = {
     id?: SortOrder
     sid?: SortOrder
-    expires?: SortOrder
     data?: SortOrder
+    expiresAt?: SortOrder
   }
 
   export type SessionWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     sid?: string
     AND?: SessionWhereInput | SessionWhereInput[]
     OR?: SessionWhereInput[]
     NOT?: SessionWhereInput | SessionWhereInput[]
-    expires?: DateTimeFilter<"Session"> | Date | string
     data?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
   }, "id" | "sid">
 
   export type SessionOrderByWithAggregationInput = {
     id?: SortOrder
     sid?: SortOrder
-    expires?: SortOrder
     data?: SortOrder
+    expiresAt?: SortOrder
     _count?: SessionCountOrderByAggregateInput
-    _avg?: SessionAvgOrderByAggregateInput
     _max?: SessionMaxOrderByAggregateInput
     _min?: SessionMinOrderByAggregateInput
-    _sum?: SessionSumOrderByAggregateInput
   }
 
   export type SessionScalarWhereWithAggregatesInput = {
     AND?: SessionScalarWhereWithAggregatesInput | SessionScalarWhereWithAggregatesInput[]
     OR?: SessionScalarWhereWithAggregatesInput[]
     NOT?: SessionScalarWhereWithAggregatesInput | SessionScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"Session"> | number
+    id?: StringWithAggregatesFilter<"Session"> | string
     sid?: StringWithAggregatesFilter<"Session"> | string
-    expires?: DateTimeWithAggregatesFilter<"Session"> | Date | string
     data?: StringWithAggregatesFilter<"Session"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -6128,9 +6092,9 @@ export namespace Prisma {
   export type FileCreateInput = {
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     createdAt?: Date | string
     updatedAt?: Date | string
     folder: FolderCreateNestedOneWithoutFilesInput
@@ -6141,9 +6105,9 @@ export namespace Prisma {
     id?: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     folderId: number
     userId: number
     createdAt?: Date | string
@@ -6153,9 +6117,9 @@ export namespace Prisma {
   export type FileUpdateInput = {
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     folder?: FolderUpdateOneRequiredWithoutFilesNestedInput
@@ -6166,9 +6130,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     folderId?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6179,9 +6143,9 @@ export namespace Prisma {
     id?: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     folderId: number
     userId: number
     createdAt?: Date | string
@@ -6191,9 +6155,9 @@ export namespace Prisma {
   export type FileUpdateManyMutationInput = {
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6202,9 +6166,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     folderId?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6212,49 +6176,52 @@ export namespace Prisma {
   }
 
   export type SessionCreateInput = {
+    id?: string
     sid: string
-    expires: Date | string
     data: string
+    expiresAt: Date | string
   }
 
   export type SessionUncheckedCreateInput = {
-    id?: number
+    id?: string
     sid: string
-    expires: Date | string
     data: string
+    expiresAt: Date | string
   }
 
   export type SessionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sid?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SessionUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     sid?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SessionCreateManyInput = {
-    id?: number
+    id?: string
     sid: string
-    expires: Date | string
     data: string
+    expiresAt: Date | string
   }
 
   export type SessionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sid?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SessionUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     sid?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -6441,9 +6408,9 @@ export namespace Prisma {
     id?: SortOrder
     filename?: SortOrder
     originalName?: SortOrder
+    url?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
-    path?: SortOrder
     folderId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6461,9 +6428,9 @@ export namespace Prisma {
     id?: SortOrder
     filename?: SortOrder
     originalName?: SortOrder
+    url?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
-    path?: SortOrder
     folderId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6474,9 +6441,9 @@ export namespace Prisma {
     id?: SortOrder
     filename?: SortOrder
     originalName?: SortOrder
+    url?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
-    path?: SortOrder
     folderId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -6493,30 +6460,22 @@ export namespace Prisma {
   export type SessionCountOrderByAggregateInput = {
     id?: SortOrder
     sid?: SortOrder
-    expires?: SortOrder
     data?: SortOrder
-  }
-
-  export type SessionAvgOrderByAggregateInput = {
-    id?: SortOrder
+    expiresAt?: SortOrder
   }
 
   export type SessionMaxOrderByAggregateInput = {
     id?: SortOrder
     sid?: SortOrder
-    expires?: SortOrder
     data?: SortOrder
+    expiresAt?: SortOrder
   }
 
   export type SessionMinOrderByAggregateInput = {
     id?: SortOrder
     sid?: SortOrder
-    expires?: SortOrder
     data?: SortOrder
-  }
-
-  export type SessionSumOrderByAggregateInput = {
-    id?: SortOrder
+    expiresAt?: SortOrder
   }
 
   export type FolderCreateNestedManyWithoutUserInput = {
@@ -6825,9 +6784,9 @@ export namespace Prisma {
   export type FileCreateWithoutUserInput = {
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     createdAt?: Date | string
     updatedAt?: Date | string
     folder: FolderCreateNestedOneWithoutFilesInput
@@ -6837,9 +6796,9 @@ export namespace Prisma {
     id?: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     folderId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6905,9 +6864,9 @@ export namespace Prisma {
     id?: IntFilter<"File"> | number
     filename?: StringFilter<"File"> | string
     originalName?: StringFilter<"File"> | string
+    url?: StringFilter<"File"> | string
     mimeType?: StringFilter<"File"> | string
     size?: IntFilter<"File"> | number
-    path?: StringFilter<"File"> | string
     folderId?: IntFilter<"File"> | number
     userId?: IntFilter<"File"> | number
     createdAt?: DateTimeFilter<"File"> | Date | string
@@ -6935,9 +6894,9 @@ export namespace Prisma {
   export type FileCreateWithoutFolderInput = {
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutFilesInput
@@ -6947,9 +6906,9 @@ export namespace Prisma {
     id?: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     userId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7104,9 +7063,9 @@ export namespace Prisma {
     id?: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     folderId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7137,9 +7096,9 @@ export namespace Prisma {
   export type FileUpdateWithoutUserInput = {
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     folder?: FolderUpdateOneRequiredWithoutFilesNestedInput
@@ -7149,9 +7108,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     folderId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7161,9 +7120,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     folderId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7173,9 +7132,9 @@ export namespace Prisma {
     id?: number
     filename: string
     originalName: string
+    url: string
     mimeType: string
     size: number
-    path: string
     userId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7184,9 +7143,9 @@ export namespace Prisma {
   export type FileUpdateWithoutFolderInput = {
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutFilesNestedInput
@@ -7196,9 +7155,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7208,9 +7167,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     filename?: StringFieldUpdateOperationsInput | string
     originalName?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
     mimeType?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
-    path?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

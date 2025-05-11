@@ -1,30 +1,52 @@
 const express = require("express");
 const session = require("express-session");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require("./generated/prisma/index");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const uploadToCloudinary = multer({ storage: multer.memoryStorage() });
+const cloudinary = require("cloudinary").v2;
 
-const prisma = new PrismaClient();
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
+// Configuration Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Prisma Client
+const prisma = new PrismaClient({
+  log: ["query", "info", "warn", "error"],
+});
+
+// Date Base
+async function checkDatabaseConnection() {
+  try {
+    await prisma.$connect();
+    console.log("✅ Conexión a la base de datos establecida");
+    await prisma.$disconnect();
+  } catch (error) {
+    console.error("❌ Error de conexión a la base de datos:", error);
+    process.exit(1);
+  }
+}
+
+checkDatabaseConnection();
+
+const app = express();
+
+// Middlewares
+app.use(express.json({ limit: "50mb" }));
+
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// Session
 app.use(
   session({
-    secret: "tu-secreto-seguro", // ¡Reemplaza esto con una clave secreta fuerte!
+    secret: "tu-secreto-seguro",
     resave: false,
     saveUninitialized: false,
     store: new PrismaSessionStore(prisma, {
@@ -41,7 +63,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Configuración de la estrategia local de Passport
+// Configuration de Passport
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
@@ -64,7 +86,6 @@ passport.use(
   })
 );
 
-// Serialización y deserialización de usuarios
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -78,7 +99,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Middleware para proteger rutas
+// Middleware de autenticación
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -86,7 +107,7 @@ function isAuthenticated(req, res, next) {
   res.redirect("/login");
 }
 
-// Función auxiliar para formatear el tamaño del archivo
+// Format file
 function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return "0 Bytes";
   const k = 1024;
@@ -96,10 +117,29 @@ function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-// Rutas
+// Configuration from Multer to memory uploads (to Cloudinary)
+const uploadToCloudinary = multer({ storage: multer.memoryStorage() });
+
+// Función para generar nombres de archivo cortos
+function generateShortFilename(originalName, userId) {
+  // Obtener la extensión del archivo
+  const fileExtension = path.extname(originalName);
+
+  // Limitar  name base to 50 characteres max
+  const baseName = path.basename(originalName, fileExtension).substring(0, 50);
+
+  // Unique shrot Id
+  const uniqueId =
+    Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
+
+  return `u${userId}_${baseName}_${uniqueId}${fileExtension}`;
+}
+
+// Routes de autenticación
 app.get("/", (req, res) =>
   res.send('Página principal <a href="/login">Iniciar Sesión</a>')
 );
+
 app.get("/login", (req, res) =>
   res.send(`
   <h1>Iniciar Sesión</h1>
@@ -117,6 +157,7 @@ app.get("/login", (req, res) =>
   <p><a href="/register">Registrarse</a></p>
 `)
 );
+
 app.post(
   "/login",
   passport.authenticate("local", {
@@ -125,6 +166,7 @@ app.post(
     failureFlash: true,
   })
 );
+
 app.get("/register", (req, res) =>
   res.send(`
   <h1>Registrarse</h1>
@@ -142,11 +184,22 @@ app.get("/register", (req, res) =>
   <p><a href="/login">Iniciar Sesión</a></p>
 `)
 );
+
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
   try {
+    const existingUser = await prisma.user.findUnique({ where: { username } });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .send(
+          "El nombre de usuario ya está registrado. Por favor, elige otro."
+        );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await prisma.user.create({
+    await prisma.user.create({
       data: {
         username,
         password: hashedPassword,
@@ -158,16 +211,27 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Error al registrar usuario.");
   }
 });
+
 app.get("/logout", (req, res) => {
   req.logout(() => {
     res.redirect("/");
   });
 });
+
+// Routes  dashboard
 app.get("/dashboard", isAuthenticated, async (req, res) => {
   const folders = await prisma.folder.findMany({
     where: { userId: req.user.id },
     orderBy: { createdAt: "desc" },
   });
+
+  const looseFilesFolderId = 5;
+
+  const looseFiles = await prisma.file.findMany({
+    where: { userId: req.user.id, folderId: looseFilesFolderId },
+    orderBy: { createdAt: "desc" },
+  });
+
   res.send(`
     <h1>Panel de Control</h1>
     <p>Bienvenido, ${req.user.username}!</p>
@@ -180,11 +244,22 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
         )
         .join("")}
     </ul>
+    <h2>Archivos Sueltos</h2>
+    <ul>
+      ${looseFiles
+        .map(
+          (file) =>
+            `<li><a href="/files/${file.id}">${
+              file.originalName
+            }</a> (${formatBytes(file.size)})</li>`
+        )
+        .join("")}
+    </ul>
     <p><a href="/folders/create">Crear Nueva Carpeta</a> | <a href="/upload">Subir Archivo (sin carpeta)</a> | <a href="/logout">Cerrar Sesión</a></p>
   `);
 });
 
-// Rutas para Carpetas
+// Routes folders
 app.get("/folders", isAuthenticated, async (req, res) => {
   try {
     const folders = await prisma.folder.findMany({
@@ -226,7 +301,7 @@ app.get("/folders/create", isAuthenticated, (req, res) => {
 app.post("/folders/create", isAuthenticated, async (req, res) => {
   const { name } = req.body;
   try {
-    const newFolder = await prisma.folder.create({
+    await prisma.folder.create({
       data: {
         name: name,
         userId: req.user.id,
@@ -263,8 +338,8 @@ app.get("/folders/:folderId", isAuthenticated, async (req, res) => {
           )
           .join("")}
       </ul>
-      <h2>Subir Nuevo Archivo a "<span class="math-inline">\{folder\.name\}"</h2\>
-<form action\="/folders/</span>{folderId}/upload" method="POST" enctype="multipart/form-data">
+      <h2>Subir Nuevo Archivo a "${folder.name}"</h2>
+      <form action="/folders/${folderId}/upload" method="POST" enctype="multipart/form-data">
         <div>
           <label for="file">Seleccionar archivo:</label>
           <input type="file" name="file" id="file" required>
@@ -279,22 +354,7 @@ app.get("/folders/:folderId", isAuthenticated, async (req, res) => {
   }
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const folderId = req.params.folderId || "uncategorized";
-    const uploadDir = path.join(__dirname, "uploads", folderId);
-    fs.mkdirSync(uploadDir, { recursive: true });
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const fileExtension = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + fileExtension);
-  },
-});
-
-const uploadToFolder = multer({ storage: storage });
-
+// Upload Files to Folders (Cloudinary)
 app.post(
   "/folders/:folderId/upload",
   isAuthenticated,
@@ -305,44 +365,44 @@ app.post(
       return res.status(400).send("No se seleccionó ningún archivo.");
     }
     try {
-      const cloudinaryResult = await cloudinary.uploader.upload(
-        req.file.buffer.toString("base64"),
-        {
-          resource_type: "auto", // Detecta automáticamente el tipo de recurso
-          folder: folderId, // Opcional: guarda los archivos en carpetas en Cloudinary
-          filename_override: `${req.user.id}-${Date.now()}-${
-            req.file.originalname
-          }`, // Nombre de archivo personalizado
-        }
+      // Generar un nombre corto para el archivo
+      const shortName = generateShortFilename(
+        req.file.originalname,
+        req.user.id
       );
 
-      const folder = await prisma.folder.findUnique({
-        where: { id: parseInt(folderId), userId: req.user.id },
+      let base64String = req.file.buffer.toString("base64");
+      let dataURI = `data:${req.file.mimetype};base64,${base64String}`;
+
+      const cloudinaryResult = await cloudinary.uploader.upload(dataURI, {
+        resource_type: "auto",
+        public_id: shortName,
+        // Deshabilitar posibles procesamientos automáticos
+        eager: [],
+        transformation: [],
+        // ... otras opciones
       });
 
-      const newFile = await prisma.file.create({
+      await prisma.file.create({
         data: {
-          filename: cloudinaryResult.public_id, // Guardamos el public_id de Cloudinary como nombre
+          filename: cloudinaryResult.public_id,
           originalName: req.file.originalname,
           mimeType: req.file.mimetype,
           size: req.file.size,
-          url: cloudinaryResult.secure_url, // Guardamos la URL segura del archivo en Cloudinary
-          folderId: folder ? parseInt(folderId) : null,
+          url: cloudinaryResult.secure_url,
           userId: req.user.id,
+          folderId: parseInt(folderId), // Usar el ID de la carpeta de la URL
         },
       });
-      console.log("Archivo subido a Cloudinary y registrado:", newFile);
-      res.redirect(folder ? `/folders/${folderId}` : "/dashboard");
+      res.redirect(`/folders/${folderId}`);
     } catch (error) {
-      console.error(
-        "Error al subir a Cloudinary o registrar el archivo:",
-        error
-      );
+      console.error("Error al subir el archivo:", error);
       res.status(500).send("Error al subir y registrar el archivo.");
     }
   }
 );
 
+// Update and Delete Folders
 app.get("/folders/:folderId/edit", isAuthenticated, async (req, res) => {
   const { folderId } = req.params;
   try {
@@ -356,10 +416,10 @@ app.get("/folders/:folderId/edit", isAuthenticated, async (req, res) => {
     }
     res.send(`
       <h1>Editar Carpeta</h1>
-      <form action="/folders/<span class="math-inline">\{folderId\}/edit" method\="POST"\>
-<div\>
-<label for\="name"\>Nuevo Nombre\:</label\>
-<input type\="text" name\="name" id\="name" value\="</span>{folder.name}" required>
+      <form action="/folders/${folderId}/edit" method="POST">
+        <div>
+          <label for="name">Nuevo Nombre:</label>
+          <input type="text" name="name" id="name" value="${folder.name}" required>
         </div>
         <button type="submit">Guardar Cambios</button>
       </form>
@@ -377,7 +437,7 @@ app.post("/folders/:folderId/edit", isAuthenticated, async (req, res) => {
   const { folderId } = req.params;
   const { name } = req.body;
   try {
-    const updatedFolder = await prisma.folder.update({
+    await prisma.folder.update({
       where: { id: parseInt(folderId), userId: req.user.id },
       data: { name: name },
     });
@@ -394,7 +454,6 @@ app.post("/folders/:folderId/delete", isAuthenticated, async (req, res) => {
     await prisma.folder.delete({
       where: { id: parseInt(folderId), userId: req.user.id },
     });
-    // Considera aquí la lógica para eliminar los archivos asociados del sistema de archivos si es necesario
     res.redirect("/folders");
   } catch (error) {
     console.error("Error al eliminar la carpeta:", error);
@@ -402,7 +461,7 @@ app.post("/folders/:folderId/delete", isAuthenticated, async (req, res) => {
   }
 });
 
-// Rutas para Archivos
+// Routes para files
 app.get("/files/:fileId", isAuthenticated, async (req, res) => {
   const { fileId } = req.params;
   try {
@@ -417,7 +476,6 @@ app.get("/files/:fileId", isAuthenticated, async (req, res) => {
     res.send(`
         <h1>Detalles del Archivo</h1>
         <p><strong>Nombre:</strong> ${file.originalName}</p>
-        <p><strong>Nombre en Cloudinary:</strong> ${file.filename}</p>
         <p><strong>Tipo:</strong> ${file.mimeType}</p>
         <p><strong>Tamaño:</strong> ${formatBytes(file.size)}</p>
         <p><strong>Subido el:</strong> ${file.createdAt.toLocaleString()}</p>
@@ -434,6 +492,7 @@ app.get("/files/:fileId", isAuthenticated, async (req, res) => {
   }
 });
 
+// Uploads files with out folder (Cloudinary)
 app.get("/upload", isAuthenticated, (req, res) => {
   res.send(`
     <h1>Subir Archivo (sin carpeta)</h1>
@@ -457,18 +516,26 @@ app.post(
       return res.status(400).send("No se seleccionó ningún archivo.");
     }
     try {
-      const cloudinaryResult = await cloudinary.uploader.upload(
-        req.file.buffer.toString("base64"),
-        {
-          resource_type: "auto",
-          folder: "uncategorized", // O la carpeta que prefieras para archivos sin carpeta
-          filename_override: `${req.user.id}-${Date.now()}-${
-            req.file.originalname
-          }`,
-        }
+      // Generar un nombre corto para el archivo
+      const shortName = generateShortFilename(
+        req.file.originalname,
+        req.user.id
       );
 
-      const newFile = await prisma.file.create({
+      let base64String = req.file.buffer.toString("base64");
+      let dataURI = `data:${req.file.mimetype};base64,${base64String}`;
+
+      const cloudinaryResult = await cloudinary.uploader.upload(dataURI, {
+        resource_type: "auto",
+        public_id: shortName,
+
+        eager: [],
+        transformation: [],
+      });
+
+      const defaultLooseFilesFolderId = 5;
+
+      await prisma.file.create({
         data: {
           filename: cloudinaryResult.public_id,
           originalName: req.file.originalname,
@@ -476,24 +543,23 @@ app.post(
           size: req.file.size,
           url: cloudinaryResult.secure_url,
           userId: req.user.id,
-          folderId: null,
+          folderId: defaultLooseFilesFolderId,
+          user: { connect: { id: req.user.id } },
         },
       });
-      console.log(
-        "Archivo subido a Cloudinary (sin carpeta) y registrado:",
-        newFile
-      );
       res.redirect("/dashboard");
     } catch (error) {
-      console.error(
-        "Error al subir a Cloudinary (sin carpeta) o registrar el archivo:",
-        error
-      );
-      res.status(500).send("Error al subir y registrar el archivo.");
+      console.error("Error al subir el archivo:", error);
+      res.status(500).json({
+        error: "Error al subir el archivo",
+        details: error.message,
+      });
     }
   }
 );
 
-app.listen(3000, () => {
-  console.log("Servidor escuchando en el puerto 3000");
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en el puerto ${PORT}`);
 });

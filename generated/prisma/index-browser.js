@@ -138,9 +138,9 @@ exports.Prisma.FileScalarFieldEnum = {
   id: 'id',
   filename: 'filename',
   originalName: 'originalName',
+  url: 'url',
   mimeType: 'mimeType',
   size: 'size',
-  path: 'path',
   folderId: 'folderId',
   userId: 'userId',
   createdAt: 'createdAt',
@@ -150,8 +150,8 @@ exports.Prisma.FileScalarFieldEnum = {
 exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
   sid: 'sid',
-  expires: 'expires',
-  data: 'data'
+  data: 'data',
+  expiresAt: 'expiresAt'
 };
 
 exports.Prisma.SortOrder = {

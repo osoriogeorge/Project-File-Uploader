@@ -31,16 +31,16 @@ model Folder {
   files     File[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@unique([userId, name]) // Un usuario no puede tener dos carpetas con el mismo nombre
+  @@unique([userId, name]) 
 }
 
 model File {
   id        Int      @id @default(autoincrement())
   filename  String
   originalName String
+  url           String
   mimeType  String
   size      Int
-  path      String // Ruta en el sistema de archivos
   folderId  Int
   folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
   userId    Int
@@ -50,9 +50,9 @@ model File {
 }
 
 model Session {
-  id             Int      @id @default(autoincrement())
-  sid            String   @unique
-  expires        DateTime
-  data           String   @db.Text
-  @@index([expires])
+  id        String   @id @default(cuid())
+  sid       String   @unique
+  data      String   @db.Text
+  expiresAt DateTime
+ 
 }
